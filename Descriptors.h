@@ -1,8 +1,29 @@
 #ifndef DESCRIPTORS_H_
 #define DESCRIPTORS_H_
 
+#include <vector>
 #include "DenseTrackStab.h"
 using namespace cv;
+
+Mat windowedMatchingMask( const std::vector<KeyPoint>& keypoints1, const std::vector<KeyPoint>& keypoints2,
+                          float maxDeltaX, float maxDeltaY )
+{
+  if( keypoints1.empty() || keypoints2.empty() )
+    return Mat();
+
+  int n1 = (int)keypoints1.size(), n2 = (int)keypoints2.size();
+  Mat mask( n1, n2, CV_8UC1 );
+  for( int i = 0; i < n1; i++ )
+    {
+      for( int j = 0; j < n2; j++ )
+        {
+          Point2f diff = keypoints2[j].pt - keypoints1[i].pt;
+          mask.at<uchar>(i, j) = std::abs(diff.x) < maxDeltaX && std::abs(diff.y) < maxDeltaY;
+        }
+    }
+  return mask;
+}
+
 
 // get the rectangle for computing the descriptor
 void GetRect(const Point2f& point, RectInfo& rect, const int width, const int height, const DescInfo& descInfo)
@@ -542,5 +563,7 @@ void MatchFromFlow(const Mat& prev_grey, const Mat& flow, std::vector<Point2f>& 
 		pts.push_back(Point2f(x+f[2*x], y+f[2*x+1]));
 	}
 }
+
+
 
 #endif /*DESCRIPTORS_H_*/

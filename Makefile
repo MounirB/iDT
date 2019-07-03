@@ -1,6 +1,8 @@
 # custom opencv
-OPENCV_INC := /home/chuck/opencv-2.4.11-cuda7.5/include
-OPENCV_LIB := /home/chuck/opencv-2.4.11-cuda7.5/lib
+# OPENCV_INC := /home/chuck/opencv-2.4.11-cuda7.5/include
+# OPENCV_LIB := /home/chuck/opencv-2.4.11-cuda7.5/lib
+OPENCV_INC := /home/mounir/opencv/include
+OPENCV_LIB := /home/mounir/opencv_contrib/
 
 # set the binaries that have to be built
 TARGETS := DenseTrackStab Video

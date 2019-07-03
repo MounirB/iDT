@@ -7,7 +7,7 @@
 
 using namespace cv;
 
-int show_track = 0; // set show_track = 1, if you want to visualize the trajectories
+int show_track = 1; // set show_track = 1, if you want to visualize the trajectories
 
 int main(int argc, char** argv)
 {
@@ -47,8 +47,11 @@ int main(int argc, char** argv)
 	if(show_track == 1)
 		namedWindow("DenseTrackStab", 0);
 
-	SurfFeatureDetector detector_surf(200);
-	SurfDescriptorExtractor extractor_surf(true, true);
+	// cv::xfeatures2d::SurfFeatureDetector detector_surf(200);
+	// cv::xfeatures2d::SurfDescriptorExtractor extractor_surf(true, true);
+
+	Ptr<xfeatures2d::SURF> detector_surf = xfeatures2d::SURF::create(200);
+	Ptr<xfeatures2d::SURF> extractor_surf = xfeatures2d::SURF::create(true, true);
 
 	std::vector<Point2f> prev_pts_flow, pts_flow;
 	std::vector<Point2f> prev_pts_surf, pts_surf;
@@ -101,7 +104,7 @@ int main(int argc, char** argv)
 			xyScaleTracks.resize(scale_num);
 
 			frame.copyTo(image);
-			cvtColor(image, prev_grey, CV_BGR2GRAY);
+			cvtColor(image, prev_grey, COLOR_BGR2GRAY);
 
 			for(int iScale = 0; iScale < scale_num; iScale++) {
 				if(iScale == 0)
@@ -126,8 +129,8 @@ int main(int argc, char** argv)
 			if(bb_file)
 				InitMaskWithBox(human_mask, bb_list[frame_num].BBs);
 
-			detector_surf.detect(prev_grey, prev_kpts_surf, human_mask);
-			extractor_surf.compute(prev_grey, prev_kpts_surf, prev_desc_surf);
+			detector_surf->detect(prev_grey, prev_kpts_surf, human_mask);
+			extractor_surf->compute(prev_grey, prev_kpts_surf, prev_desc_surf);
 
 			frame_num++;
 			continue;
@@ -135,13 +138,13 @@ int main(int argc, char** argv)
 
 		init_counter++;
 		frame.copyTo(image);
-		cvtColor(image, grey, CV_BGR2GRAY);
+		cvtColor(image, grey, COLOR_BGR2GRAY);
 
 		// match surf features
 		if(bb_file)
 			InitMaskWithBox(human_mask, bb_list[frame_num].BBs);
-		detector_surf.detect(grey, kpts_surf, human_mask);
-		extractor_surf.compute(grey, kpts_surf, desc_surf);
+		detector_surf->detect(grey, kpts_surf, human_mask);
+		extractor_surf->compute(grey, kpts_surf, desc_surf);
 		ComputeMatch(prev_kpts_surf, kpts_surf, prev_desc_surf, desc_surf, prev_pts_surf, pts_surf);
 
 		// compute optical flow for all scales once
@@ -289,7 +292,7 @@ int main(int argc, char** argv)
 
 		if( show_track == 1 ) {
 			imshow( "DenseTrackStab", image);
-			c = cvWaitKey(3);
+			c = waitKey(3);
 			if((char)c == 27) break;
 		}
 	}

@@ -8,6 +8,10 @@ Currently, the libraries are the latest versions. In case they will be out of da
 
 If these libraries are installed correctly, simply type 'make' to compile the code. The executable will be in the directory './release/'.
 
+Or you can compile this way :
+
+g++ *.cpp -o DenseTracktab -L/opt/lib -pipe -Wall -L/usr/local/lib -lopencv_core -lopencv_highgui -lopencv_videoio -lopencv_imgproc -lopencv_xfeatures2d -lopencv_calib3d -lopencv_features2d -lavformat -lavdevice -lavutil -lavcodec -lswscale
+
 ### test video decoding  ###
 
 The most complicated part of compiling is to install opencv and ffmpeg. To make sure your video is decoded properly, we have a simple code (named 'Video.cpp') for visualization:
